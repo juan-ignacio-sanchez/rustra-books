@@ -21,7 +21,7 @@ class Library:
         return reduce(lambda x, y: x + y, scores_per_book)
 
     def rate(self):
-        return (self.score_sum() / len(self.books)) * self.books_per_day
+        return (self.score_sum() / self.signup) * self.books_per_day
 
     def to_dict(self):
         return {'index': self.index, 'sent_books': len(self.books_to_send), 'booklist': self.books_to_send}
@@ -49,6 +49,7 @@ def scan(libraries, deadline):
         lib, tail = libraries[0], libraries[1:]
         libraries = tail
         libraries = sorted(libraries, key=lambda x: x.rate(), reverse=True)
+        libraries = [lib for lib in libraries if lib.signup + total < deadline]
         total += lib.signup
         if total <= deadline:
             # select books
