@@ -45,11 +45,7 @@ def scan(libraries, deadline):
     to_send = []
     libraries = sorted(libraries, key=lambda x: x.rate(), reverse=True)
 
-    while libraries and total <= deadline:
-        lib, tail = libraries[0], libraries[1:]
-        libraries = tail
-        libraries = sorted(libraries, key=lambda x: x.rate(), reverse=True)
-        libraries = [lib for lib in libraries if lib.signup + total < deadline]
+    for lib in libraries:
         total += lib.signup
         if total <= deadline:
             # select books
@@ -58,18 +54,8 @@ def scan(libraries, deadline):
             for book in lib.books_to_send:
                 scores[int(book)] = 0
             to_send.append(lib.to_dict())
-
-    # for lib in libraries:
-    #     total += lib.signup
-    #     if total <= deadline:
-    #         # select books
-    #         total_books_to_choose = min(len(lib.books), lib.books_per_day * (deadline - total))
-    #         lib.books_to_send = [str(x[0]) for x in sorted(lib.score_per_book(), key=lambda x: x[1], reverse=True)[:total_books_to_choose]]
-    #         for book in lib.books_to_send:
-    #             scores[int(book)] = 0
-    #         to_send.append(lib.to_dict())
-    #     else:
-    #         break
+        else:
+            break
     return to_send
 
 
